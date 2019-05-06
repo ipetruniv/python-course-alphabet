@@ -1,3 +1,4 @@
+import random
 from typing import List, Dict, Union, Generator
 
 # We will work with such dicts
@@ -15,7 +16,8 @@ def task_1_fix_names_start_letter(data: DT) -> DT:
         >>> [{'name': 'Alex', 'age': 26}, {'name': 'Denys', 'age': 89}]
     """
     for record in data:
-        record['name'] = record['name'].capitalize()
+        if 'name' in record:
+            record['name'] = record['name'].capitalize()
     return data
 
 
@@ -56,8 +58,8 @@ def task_5_min_value_strings(data: List[Union[str, int]]) -> str:
     """
     Find the longest string
     """
-
-    return max([x for x in data])
+    tempdata = {str(v): len(str(v)) for v in data}
+    return min(tempdata, key=tempdata.get, default=None)
 
 
 def task_6_min_value_list_of_dicts(data: DT, key: str) -> ST:
@@ -66,21 +68,42 @@ def task_6_min_value_list_of_dicts(data: DT, key: str) -> ST:
     Returns:
 
     """
-    pass
+    newdata = []
+    for member in data:
+        if key in member:
+            newdata.append(member)
+
+    print(newdata)
+    min_value = min(map(lambda x: x.get(key), newdata))
+    for member in newdata:
+        if member.get(key) == min_value:
+            result = member
+    return result
+
+    return result
 
 
 def task_7_max_value_list_of_lists(data: List[List[int]]) -> int:
     """
     Find max value from list of lists
     """
-    pass
+    newlist = []
+
+    def max_single_list(single_list):
+        newlist.append(max(single_list))
+        return max(single_list)
+
+    for s_list in data:
+        if s_list != []:
+            max_single_list(s_list)
+    return max_single_list(newlist)
 
 
 def task_8_sum_of_ints(data: List[int]) -> int:
     """
     Find sum of all items in given list
     """
-    pass
+    return sum(data)
 
 
 def task_9_sum_characters_positions(text: str) -> int:
@@ -96,7 +119,7 @@ def task_9_sum_characters_positions(text: str) -> int:
         >>> 532
 
     """
-    pass
+    return sum([ord(word) for word in text])
 
 
 def task_10_generator_of_simple_numbers() -> Generator[int, None, None]:
@@ -110,12 +133,14 @@ def task_10_generator_of_simple_numbers() -> Generator[int, None, None]:
         next(a)
         >>> 3
     """
-    pass
-
+    for n in range(2, 201):
+        if all(n % x != 0 for x in range(2, n)):
+            yield n
 
 def task_11_create_list_of_random_characters() -> List[str]:
     """
     Create list of 20 elements where each element is random letter from latin alphabet
 
     """
-    pass
+    return [str(chr(random.randint(97, 122))) for x in range(0, 20)]
+
