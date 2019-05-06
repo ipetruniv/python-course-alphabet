@@ -1,5 +1,6 @@
-import random
 from typing import List, Dict, Union, Generator
+import random
+import string
 
 # We will work with such dicts
 ST = Dict[str, Union[str, int]]
