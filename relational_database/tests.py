@@ -32,6 +32,7 @@ class TestSQLQueries(unittest.TestCase):
 
     conn = None
     cur = None
+    maxDiff = None
 
     @staticmethod
     def drop_test_database_and_role(conn):
