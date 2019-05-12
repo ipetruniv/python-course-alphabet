@@ -1,10 +1,3 @@
-from typing import List
-import psycopg2
-from relational_database.config import DATABASE
-
-conn = psycopg2.connect(**DATABASE)
-cur = conn.cursor()
-
 def task_1_add_new_record_to_db(con) -> None:
     """
     Add a record for a new customer from Singapore
