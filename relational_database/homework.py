@@ -114,7 +114,7 @@ def task_8_count_customers_by_city(cur):
     Returns: 69 records in descending order
 
     """
-    cur.execute("select count(city), city  from customers group by city order by count(city) desc;")
+    cur.execute("select count(customerid), city  from customers group by city order by city desc;")
     return cur.fetchall()
 
 
