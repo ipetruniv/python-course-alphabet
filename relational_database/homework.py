@@ -227,6 +227,13 @@ def task_16_match_all_customers_and_suppliers_by_country(cur):
 
     Returns: 194 records
     """
-    cur.execute("SELECT * FROM Customers INNER JOIN Suppliers ON Customers.country = Suppliers.country;")
+    # cur.execute("SELECT Customers.customername, Customers.address, Customers.Country, Suppliers.country, Suppliers.suppliername "
+    #             "FROM Customers FULL JOIN Suppliers ON Customers.country = Suppliers.country "
+    #             "order by customers.country;")
+    cur.execute(
+        "SELECT Customers.customername, Customers.address, Customers.Country as customercountry, "
+        "Suppliers.country as suppliercountry, Suppliers.suppliername  "
+        "FROM Customers FULL JOIN Suppliers ON Customers.country = Suppliers.country "
+        "order by customers.country, Suppliers.country;")
     return cur.fetchall()
 
