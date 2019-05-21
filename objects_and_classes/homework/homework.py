@@ -310,7 +310,7 @@ class Garage:
     def create_from_str(self, strtype):
         """
         strtype  - the type of data syntax (one of yaml, json, pickle)
-        """
+        """a
         pass
 
 # if __name__ == "__main__":
