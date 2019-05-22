@@ -12,7 +12,11 @@ class JsonEncoder(json.JSONEncoder):
 
 
 def json_hook(obj):
-    if 'set' in obj:
-        return set(obj)
-
-    return obj
+    # newobj = dict({})
+    # for k, v in obj.items():
+    #     if k == 'set':
+    #         newobj[k] = set(v)
+    #     else:
+    #         newobj[k] = v
+    # return newobj
+    return {k: (set(v) if k == 'set' else v) for (k, v) in obj.items()}

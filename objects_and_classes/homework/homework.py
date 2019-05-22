@@ -1,6 +1,6 @@
 import uuid
 from objects_and_classes.homework.constants import *
-
+import json
 """
 Вам небхідно написати 3 класи. Колекціонери Гаражі та Автомобілі.
 Звязкок наступний один колекціонер може мати багато гаражів.
@@ -123,6 +123,34 @@ class Cesar:
         else:
             return False
 
+    # Serialization HW
+    def import_from_file(self, filename: str, filetype: str):
+        """
+        filename - the name of file uses to import from
+        filetype - the type of stored data syntax (one of yaml, json, pickle)
+        """
+        pass
+
+    def export_to_file(self, filename: str, filetype: str):
+        """
+        filename - the name of file uses for export to
+        filetype - the type of stored data syntax (one of yaml, json, pickle)
+        """
+        pass
+
+    def conver_to_str(self, strtype):
+        """
+        strtype  - the type of data syntax (one of yaml, json, pickle)
+        """
+        pass
+
+    def create_from_str(self, strtype):
+        """
+        strtype  - the type of data syntax (one of yaml, json, pickle)
+        """
+        pass
+
+
 class Car:
     def __init__(self, name, price, type, producer, mileage):
         self.name = name
@@ -197,6 +225,32 @@ class Car:
         else:
             return False
 
+    #Serialization HW
+    def import_from_file(self, filename: str, filetype: str):
+        """
+        filename - the name of file uses to import from
+        filetype - the type of stored data syntax (one of yaml, json, pickle)
+        """
+        pass
+
+    def export_to_file(self, filename: str, filetype: str):
+        """
+        filename - the name of file uses for export to
+        filetype - the type of stored data syntax (one of yaml, json, pickle)
+        """
+        pass
+
+    def conver_to_str(self, strtype):
+        """
+        strtype  - the type of data syntax (one of yaml, json, pickle)
+        """
+        pass
+
+    def create_from_str(self, strtype):
+        """
+        strtype  - the type of data syntax (one of yaml, json, pickle)
+        """
+        pass
 
 
 class Garage:
@@ -232,6 +286,32 @@ class Garage:
     def freeplaces(self):
         return self.places - len(self.cars)
 
+    # Serialization HW
+    def import_from_file(self, filename: str, filetype: str):
+        """
+        filename - the name of file uses to import from
+        filetype - the type of stored data syntax (one of yaml, json, pickle)
+        """
+        pass
+
+    def export_to_file(self, filename: str, filetype: str):
+        """
+        filename - the name of file uses for export to
+        filetype - the type of stored data syntax (one of yaml, json, pickle)
+        """
+        pass
+
+    def conver_to_str(self, strtype):
+        """
+        strtype  - the type of data syntax (one of yaml, json, pickle)
+        """
+        pass
+
+    def create_from_str(self, strtype):
+        """
+        strtype  - the type of data syntax (one of yaml, json, pickle)
+        """a
+        pass
 
 # if __name__ == "__main__":
 #
