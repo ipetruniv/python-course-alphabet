@@ -18,8 +18,9 @@ Advanced
 
 """
 
-
 import uuid
+import random
+
 from objects_and_classes.homework.constants import *
 import json
 import pickle
@@ -65,46 +66,29 @@ class Cesar:
 
     # <=
     def __le__(self, other):
-        if float(self.hit_hat()) <= float(other.hit_hat()):
-            return True
-        else:
-            return False
+        return float(self.hit_hat()) <= float(other.hit_hat())
 
     # >=
     def __ge__(self, other):
-        if float(self.hit_hat()) >= float(other.hit_hat()):
-            return True
-        else:
-            return False
+        return float(self.hit_hat()) >= float(other.hit_hat())
 
     # <
     def __lt__(self, other):
-        if float(self.hit_hat()) < float(other.hit_hat()):
-            return True
-        else:
-            return False
+        return float(self.hit_hat()) < float(other.hit_hat())
 
     def __gt__(self, other):
-        if float(self.hit_hat()) > float(other.hit_hat()):
-            return True
-        else:
-            return False
+        return float(self.hit_hat()) > float(other.hit_hat())
 
     # ==
     def __eq__(self, other):
-        if float(self.hit_hat()) == float(other.hit_hat()):
-            return True
-        else:
-            return False
+        return float(self.hit_hat()) == float(other.hit_hat())
 
     # !=
     def __ne__(self, other):
-        if float(self.hit_hat()) != float(other.hit_hat()):
-            return True
-        else:
-            return False
+        return float(self.hit_hat()) != float(other.hit_hat())
 
     # Serialization HW
+    @classmethod
     def import_from_file(filename: str, filetype: str):
         """
         filename - the name of file uses to import from
@@ -181,6 +165,7 @@ class Car:
     def logs(self):
         return (f"Car name: {self.name}\nPrice: {self.price}\nProducer: {self.producer}\nNumber: {self.number}"
                 f"\nMileage: {self.mileage}")
+
     def print(self):
         return (f"Car name: {self.name}, Price: {self.price}, Producer: {self.producer}, Number: {self.number}, "
                 f" Mileage: {self.mileage}")
@@ -191,71 +176,26 @@ class Car:
 
     # <=
     def __le__(self, other):
-        if float(self.price) <=  float(other.price):
-            return True
-        else:
-            return False
+        return float(self.price) <=  float(other.price)
 
     # >=
     def __ge__(self, other):
-        if float(self.price) >= float(other.price):
-            return True
-        else:
-            return False
+        return float(self.price) >= float(other.price)
 
     # <
     def __lt__(self, other):
-        if float(self.price) < float(other.price):
-            return True
-        else:
-            return False
+        return float(self.price) < float(other.price)
 
     def __gt__(self, other):
-        if float(self.price) > float(other.price):
-            return True
-        else:
-            return False
+        return float(self.price) > float(other.price)
 
     # ==
     def __eq__(self, other):
-        if float(self.price) == float(other.price):
-            return True
-        else:
-            return False
+        return float(self.price) == float(other.price)
 
     # !=
     def __ne__(self, other):
-        if float(self.price) != float(other.price):
-            return True
-        else:
-            return False
-
-    #Serialization HW
-    def import_from_file(filename: str, filetype: str):
-        """
-        filename - the name of file uses to import from
-        filetype - the type of stored data syntax (one of yaml, json, pickle)
-        """
-        pass
-
-    def export_to_file(self, filename: str, filetype: str):
-        """
-        filename - the name of file uses for export to
-        filetype - the type of stored data syntax (one of yaml, json, pickle)
-        """
-        pass
-
-    def conver_to_str(self, strtype):
-        """
-        strtype  - the type of data syntax (one of yaml, json, pickle)
-        """
-        pass
-
-    def create_from_str(strtype):
-        """
-        strtype  - the type of data syntax (one of yaml, json, pickle)
-        """
-        pass
+        return float(self.price) != float(other.price)
 
 
 class Garage:
@@ -296,39 +236,26 @@ class Garage:
     def freeplaces(self):
         return self.places - len(self.cars)
 
-    # Serialization HW
-    def import_from_file(self, filename: str, filetype: str):
-        """
-        filename - the name of file uses to import from
-        filetype - the type of stored data syntax (one of yaml, json, pickle)
-        """
-        pass
-
-    def export_to_file(self, filename: str, filetype: str):
-        """
-        filename - the name of file uses for export to
-        filetype - the type of stored data syntax (one of yaml, json, pickle)
-        """
-        pass
-
-    def conver_to_str(self, strtype):
-        """
-        strtype  - the type of data syntax (one of yaml, json, pickle)
-        """
-        pass
-
-    def create_from_str(self, strtype):
-        """
-        strtype  - the type of data syntax (one of yaml, json, pickle)
-        """
-        pass
 
 if __name__ == "__main__":
 
+    #Generate cars
+    CARNAMES = ['Raptor', 'Senna', 'Vanquish', 'Spitfire',
+                'Beetle', 'Hawk', 'Gremlin', 'Superbird',
+                'Mulsanne', 'Thunderbird', 'Chery','Cisitalia',
+                'Fabia', 'Octavia']
+    cars = []
+    for car_counts in range(random.randint(5, 10)):
+        newcar = Car(
+            name = random.choice(CARNAMES),
+            price = random.randint(3000, 50000),
+            type = random.choice(CARS_TYPES),
+            producer = random.choice(CARS_PRODUCER),
+            mileage = random.randint(5000, 100000)
+        )
+        cars.append(newcar)
 
-    chery01 = Car("Tigo", 3000, "Wagon", "Chery", 3000)
-    ford01 = Car("Mustang", 4000, "Coupe", "Ford", 5000)
-    bugatti01 = Car("Chiron", 2000, "Van", "Bugatti", 5000)
+    #Generate garages
 
     garage1 = Garage("01_Garage", "Kiev",[chery01, ford01], 5)
     #print(f"The summ of all cars in {garage1.name}  garage is: {garage1.hit_hat()}")
@@ -360,13 +287,14 @@ if __name__ == "__main__":
     print(f"Cesar01: all cars price {colector01.hit_hat()}, has {colector01.garages_count()} garages")
     print(f"Cesar02: all cars price {colector02.hit_hat()}, has {colector02.garages_count()} garages")
     print(garage1.car_list())
-    # with open("collector.dump", "wb") as file:
-    #     pickle.dump(colector01, file)
-    colector01.export_to_file("collector.dump", "pickle")
-    del colector01
-    # with open("collector.dump", "rb") as file:
-    colector01 = Cesar.import_from_file("collector.dump", "pickle")
-
-    print(colector01)
-    #print(f"Cesar01: all cars price {colector01.hit_hat()}, has {colector01.garages_count()} garages")
+    # # with open("collector.dump", "wb") as file:
+    # #     pickle.dump(colector01, file)
+    # colector01.export_to_file("collector.dump", "pickle")
+    # del colector01
+    # # with open("collector.dump", "rb") as file:
+    # colector01 = Cesar.import_from_file("collector.dump", "pickle")
+    #
+    # print(colector01)
+    # #print(f"Cesar01: all cars price {colector01.hit_hat()}, has {colector01.garages_count()} garages")
+    print(chery05.print)
 
