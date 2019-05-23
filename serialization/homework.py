@@ -28,7 +28,10 @@ class Cesar:
         self.name = name
         if args:
             for arg in args:
-                self.garages.append(arg)
+                if type(arg) == Car:
+                    self.garages.append(arg)
+                else:
+                    raise TypeError("Object is not a Car")
         else:
             self.garages = []
         self.register_id = uuid.uuid4()
@@ -45,11 +48,18 @@ class Cesar:
     def __getstate__(self):
         return self.__dict__.copy()
 
-    def hit_hat(self):
-        return sum(_.hit_hat() for _ in self.garages)
+    def hit_car(self):
+        return sum(_.hit_car() for _ in self.garages)
 
     def garages_count(self):
         return len(self.garages)
+
+    def cars_count(self):
+        cars_c = 0
+        for g in self.garages:
+            cars_c += len(g.cars)
+
+        return cars_c
 
     def add_car(self, car, *args):
         if args:
@@ -71,26 +81,26 @@ class Cesar:
 
     # <=
     def __le__(self, other):
-        return float(self.hit_hat()) <= float(other.hit_hat())
+        return float(self.hit_car()) <= float(other.hit_car())
 
     # >=
     def __ge__(self, other):
-        return float(self.hit_hat()) >= float(other.hit_hat())
+        return float(self.hit_car()) >= float(other.hit_car())
 
     # <
     def __lt__(self, other):
-        return float(self.hit_hat()) < float(other.hit_hat())
+        return float(self.hit_car()) < float(other.hit_car())
 
     def __gt__(self, other):
-        return float(self.hit_hat()) > float(other.hit_hat())
+        return float(self.hit_car()) > float(other.hit_car())
 
     # ==
     def __eq__(self, other):
-        return float(self.hit_hat()) == float(other.hit_hat())
+        return float(self.hit_car()) == float(other.hit_car())
 
     # !=
     def __ne__(self, other):
-        return float(self.hit_hat()) != float(other.hit_hat())
+        return float(self.hit_car()) != float(other.hit_car())
 
     # Serialization HW
     @classmethod
@@ -232,7 +242,7 @@ class Garage:
         except:
             raise Exception("Car not found")
 
-    def hit_hat(self):
+    def hit_car(self):
         return sum(carn.price for carn in self.cars)
 
     def car_list(self):
@@ -276,36 +286,30 @@ if __name__ == "__main__":
 
 
     #Generate the owners (Cesars):
-    cesars_names = ["Ihor", "Denis", "Olga", "Vika"]
-    ihor = Cesar('Ihor')
-    denis = Cesar('Denis')
-    olga = Cesar('Olga')
-    vika = Cesar('Vika')
+    cesars = [Cesar(cesar) for cesar in ["Ihor", "Denis", "Olga", "Vika"]]
 
-    ihor.add_garage(garages_list[0])
-    ihor.add_garage(garages_list[1])
+    #Assign garages to cesars (random)
+    for g in garages_list:
+        curr_cesar = random.choice(cesars)
+        curr_cesar.add_garage(g)
 
-    denis.add_garage(garages_list[2])
-    denis.add_garage(garages_list[3])
 
-    print(denis.garages_count(), denis.garages)
-    print(ihor.garages_count(), ihor.garages)
 
-    # print("The Colectors statistic")
-    # for cesar in cesars:
-    #     print(f"{'=' * 20} start for {str(cesar.name)} {'=' * 20}")
-    #     print(f"Cear's {str(cesar.name)} garages list: {cesar.garages}")
-    #     for garage in cesar.garages:
-    #         print(f"Cesar: {cesar.name} garage: {garage}")
-        #     print(f"{'=' * 20} ")
-        #     print(f"{str(cesar.name)} list of cars in {str(garage.name)}:")
-        #     print(garage.car_list())
-        #     print(f"{'=' * 20}")
-        #     print(f"{garage.name}  cars costs: {garage.hit_hat()}")
-        #
-        #
-        # print(f"{str(cesar.name)}: all cars price {cesar.hit_hat()}, has {cesar.garages_count()} garages")
-        # print(f"{'====' * 20} end {'====' * 20} \n \n")
+    print("The Colectors statistic")
+    for cesar in cesars:
+        print(f"{'=' * 20} start for {str(cesar.name)} {'=' * 20}")
+        print(f"Cear's {str(cesar.name)} garages list: {cesar.garages}")
+        for garage in cesar.garages:
+            print(f"Cesar: {cesar.name} garage: {garage}")
+            print(f"{'=' * 20} ")
+            print(f"{str(cesar.name)} list of cars in {str(garage)}:")
+            print(garage.car_list())
+            print(f"{'=' * 20}")
+            print(f"Ceasar: {cesar.name} {garage} all cars costs: {garage.hit_car()}")
+
+
+        print(f"{str(cesar.name)}: has the {cesar.cars_count()} cars. The all cars price {cesar.hit_car()}, has {cesar.garages_count()} garages")
+        print(f"{'====' * 20} end {'====' * 20} \n \n")
 
 
 
