@@ -17,24 +17,27 @@ Advanced
 Добавити опрацьовку формату ini
 
 """
-
 import uuid
 import random
-
-from objects_and_classes.homework.constants import *
 import json
 import pickle
+from objects_and_classes.homework.constants import *
 
 class Cesar:
-    def __init__(self, name, garages = list([])):
+    def __init__(self, name, *args):
         self.name = name
-        self.garages = garages
+        if args:
+            for arg in args:
+                self.garages.append(arg)
+        else:
+            self.garages = []
         self.register_id = uuid.uuid4()
+
     def __repr__(self):
         return f"Cesar(name = {self.name}, garages = {self.garages})"
 
     def __str__(self):
-        return f"The collector name: {self.name}, he(she) has {self.garages})"
+        return f"{self.name}"
 
     def __setstate__(self, state):
         self.__dict__ = state
@@ -42,10 +45,8 @@ class Cesar:
     def __getstate__(self):
         return self.__dict__.copy()
 
-
     def hit_hat(self):
-        return sum(garage.hit_hat() for garage in self.garages)
-
+        return sum(_.hit_hat() for _ in self.garages)
 
     def garages_count(self):
         return len(self.garages)
@@ -56,12 +57,16 @@ class Cesar:
                 arg.add(car)
         else:
             freeg = {}
-            for garage in self.garages:
-                freeg[garage.name] = garage.freeplaces()
+            for ng in self.garages:
+                freeg[ng] = ng.freeplaces()
             garagename = max(freeg)
             for mygarage in self.garages:
                 if mygarage.name == garagename:
                     mygarage.add(car)
+
+    def add_garage(self, new_garage):
+        new_garage.owner = self.register_id
+        self.garages.append(new_garage)
 
 
     # <=
@@ -135,8 +140,7 @@ class Cesar:
 
 
 class Car:
-    def __init__(self, name, price, type, producer, mileage):
-        self.name = name
+    def __init__(self, price, type, producer, mileage):
         self.price = float(price)
         self.type = type
         self.producer = producer
@@ -145,7 +149,6 @@ class Car:
 
         if self.type not in CARS_TYPES:
             raise ValueError("Type must be one of:", CARS_TYPES)
-
 
         if self.producer not in CARS_PRODUCER:
             raise ValueError("Producer must be one of:", CARS_PRODUCER)
@@ -157,18 +160,18 @@ class Car:
         return self.__dict__
 
     def __str__(self):
-        return (f"The car name: {self.name}, its price: {self.price}, producer: {self.producer}, number: {self.number},"
+        return (f"Price: {self.price}, Producer: {self.producer}, Number: {self.number},"
                 f" mileage: {self.mileage}")
+
     def __repr__(self):
-        return (f"car(name = {self.name}, price = {self.price}, producer = {self.producer}, number = {self.number},"
+        return (f"car(price = {self.price}, producer = {self.producer}, number = {self.number},"
                 f" mileage = {self.mileage})")
+
     def logs(self):
-        return (f"Car name: {self.name}\nPrice: {self.price}\nProducer: {self.producer}\nNumber: {self.number}"
-                f"\nMileage: {self.mileage}")
+        return str(self)
 
     def print(self):
-        return (f"Car name: {self.name}, Price: {self.price}, Producer: {self.producer}, Number: {self.number}, "
-                f" Mileage: {self.mileage}")
+        return str(self)
 
     def new_number(self):
         self.number = uuid.uuid4()
@@ -199,15 +202,17 @@ class Car:
 
 
 class Garage:
-    def __init__(self, name, town, cars: list, places: int):
-        self.name = name
+    def __init__(self, town, cars: list, places: int):
         self.town = town
         self.cars = cars
-        self.owner = uuid.uuid4()
+        self.owner = None
         self.places = places
 
         if self.town not in TOWNS:
             raise ValueError("The town must be one of:", TOWNS)
+
+    def __repr__(self):
+        return f"town = {self.town}, cars = {self.cars}, places = {self.places}"
 
     def __setstate__(self, state):
         self.__dict__ = state
@@ -218,13 +223,14 @@ class Garage:
     def add(self, car):
         if len(self.cars) < self.places:
             self.cars.append(car)
-            print(f"{car} added to garage {self.name}")
         else:
-            return f"Garage is full"
+            raise OverflowError("Garage is full")
 
     def remove(self, car):
-        self.cars.remove(car)
-        print(f"{car} removed from garage {self.name}")
+        try:
+            self.cars.remove(car)
+        except:
+            raise Exception("Car not found")
 
     def hit_hat(self):
         return sum(carn.price for carn in self.cars)
@@ -233,68 +239,73 @@ class Garage:
         for car in self.cars:
             print(str(car))
 
-    def freeplaces(self):
+    def free_places(self):
         return self.places - len(self.cars)
 
 
 if __name__ == "__main__":
 
     #Generate cars
-    CARNAMES = ['Raptor', 'Senna', 'Vanquish', 'Spitfire',
-                'Beetle', 'Hawk', 'Gremlin', 'Superbird',
-                'Mulsanne', 'Thunderbird', 'Chery','Cisitalia',
-                'Fabia', 'Octavia']
     cars = []
     for car_counts in range(random.randint(5, 10)):
-        newcar = Car(
-            name = random.choice(CARNAMES),
+        new_car = Car(
             price = random.randint(3000, 50000),
             type = random.choice(CARS_TYPES),
             producer = random.choice(CARS_PRODUCER),
             mileage = random.randint(5000, 100000)
         )
-        cars.append(newcar)
+        cars.append(new_car)
+        del new_car, car_counts
 
     #Generate garages
+    garages_list = []
+    for garage_count in range(1, random.randint(4, 7)):
+        new_garage = Garage(random.choice(TOWNS),
+                            [],
+                            random.randint(2,10))
+        #print(f" New Garage has been created: \n{str(new_garage)}")
+        garages_list.append(new_garage)
+        del new_garage, garage_count
 
-    garage1 = Garage("01_Garage", "Kiev",[chery01, ford01], 5)
-    #print(f"The summ of all cars in {garage1.name}  garage is: {garage1.hit_hat()}")
-    print("==" * 20)
-    garage1.add(bugatti01)
-    print(f"The summ of all cars in {garage1.name}  garage is: {garage1.hit_hat()}")
-    #print("==" * 20)
 
-    bugatti02 = Car("Divo", 8000, "Coupe", "Bugatti", 3000)
-    garage2 = Garage("02_Garage", "London", [bugatti02], 1)
-    print(f"The summ of all cars in {garage2.name}  garage is: {garage2.hit_hat()}")
-    #print("==" * 20)
+    #Move cars to garage
+    for some_car in cars:
+        choice_garage = random.choice(garages_list)
+        if choice_garage.free_places() >= 1:
+            choice_garage.add(some_car)
 
-    chery03 = Car("Tigo", 5000, "Wagon", "Chery", 3000)
-    ford03 = Car("Mustang", 4000, "Coupe", "Ford", 5000)
-    bugatti03 = Car("Chiron", 1000, "Van", "Bugatti", 5000)
-    garage3 = Garage("03_Garage", "Amsterdam", [chery03, ford03, bugatti03], 5)
-    print(f"The summ of all cars in {garage3.name}  garage is: {garage3.hit_hat()}")
-    print("==" * 20)
 
-    chery05 = Car("Tigo", 2000, "Wagon", "Chery", 3000)
-    ford05 = Car("Mustang", 20000, "Coupe", "Ford", 5000)
-    bugatti05 = Car("Chiron", 400, "Van", "Bugatti", 5000)
-    garage5 = Garage("05_Garage", "Berlin", [chery05, ford05], 5)
-    print(f"The summ of all cars in {garage5.name}  garage is: {garage5.hit_hat()}")
+    #Generate the owners (Cesars):
+    cesars_names = ["Ihor", "Denis", "Olga", "Vika"]
+    ihor = Cesar('Ihor')
+    denis = Cesar('Denis')
+    olga = Cesar('Olga')
+    vika = Cesar('Vika')
 
-    colector01 = Cesar("Colector01",[garage1, garage2])
-    colector02 = Cesar("Colector01",[garage3, garage5])
-    print(f"Cesar01: all cars price {colector01.hit_hat()}, has {colector01.garages_count()} garages")
-    print(f"Cesar02: all cars price {colector02.hit_hat()}, has {colector02.garages_count()} garages")
-    print(garage1.car_list())
-    # # with open("collector.dump", "wb") as file:
-    # #     pickle.dump(colector01, file)
-    # colector01.export_to_file("collector.dump", "pickle")
-    # del colector01
-    # # with open("collector.dump", "rb") as file:
-    # colector01 = Cesar.import_from_file("collector.dump", "pickle")
-    #
-    # print(colector01)
-    # #print(f"Cesar01: all cars price {colector01.hit_hat()}, has {colector01.garages_count()} garages")
-    print(chery05.print)
+    ihor.add_garage(garages_list[0])
+    ihor.add_garage(garages_list[1])
+
+    denis.add_garage(garages_list[2])
+    denis.add_garage(garages_list[3])
+
+    print(denis.garages_count(), denis.garages)
+    print(ihor.garages_count(), ihor.garages)
+
+    # print("The Colectors statistic")
+    # for cesar in cesars:
+    #     print(f"{'=' * 20} start for {str(cesar.name)} {'=' * 20}")
+    #     print(f"Cear's {str(cesar.name)} garages list: {cesar.garages}")
+    #     for garage in cesar.garages:
+    #         print(f"Cesar: {cesar.name} garage: {garage}")
+        #     print(f"{'=' * 20} ")
+        #     print(f"{str(cesar.name)} list of cars in {str(garage.name)}:")
+        #     print(garage.car_list())
+        #     print(f"{'=' * 20}")
+        #     print(f"{garage.name}  cars costs: {garage.hit_hat()}")
+        #
+        #
+        # print(f"{str(cesar.name)}: all cars price {cesar.hit_hat()}, has {cesar.garages_count()} garages")
+        # print(f"{'====' * 20} end {'====' * 20} \n \n")
+
+
 
