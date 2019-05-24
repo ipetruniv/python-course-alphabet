@@ -1,7 +1,9 @@
+from __future__ import annotations
 import uuid
 import random
 import pickle
 from objects_and_classes.homework.constants import *
+import json
 
 class Cesar:
     def __init__(self, name, *args):
@@ -130,11 +132,14 @@ class Cesar:
 
 
 class Car:
-    def __init__(self, price, type, producer, mileage):
+    def __init__(self, price, type, producer, mileage, number = None):
         self.price = float(price)
         self.type = type
         self.producer = producer
-        self.number = uuid.uuid4()
+        if number == None:
+            self.number = uuid.uuid4()
+        else:
+            self.number = uuid.UUID(number)
         self.mileage = mileage
 
         if self.type not in CARS_TYPES:
@@ -156,6 +161,25 @@ class Car:
     def __repr__(self):
         return (f"car(price = {self.price}, producer = {self.producer}, number = {self.number},"
                 f" mileage = {self.mileage})")
+
+    @classmethod
+    def from_json(cls, data):
+        price = data.get('price')
+        type = data.get('type')
+        producer = data.get('producer')
+        number = data.get('number')
+        mileage = data.get('mileage')
+        new_car = Car(price = price, type = type, producer = producer, mileage = mileage, number = number  )
+        return new_car
+
+    @staticmethod
+    def to_json(obj: Car):
+        data = {"price": obj.price,
+                "type": obj.type,
+                "producer": obj.producer,
+                "number": str(obj.number),
+                "mileage": obj.mileage}
+        return data
 
     def logs(self):
         return str(self)
@@ -192,7 +216,7 @@ class Car:
 
 
 class Garage:
-    def __init__(self, town, cars: list, places: int):
+    def __init__(self, town, places: int, cars = []):
         self.town = town
         self.cars = cars
         self.owner = None
@@ -209,6 +233,23 @@ class Garage:
 
     def __getstate__(self):
         return self.__dict__
+
+    @classmethod
+    def from_json(cls, data):
+        town = data.get('town')
+        cars = data.get('cars')
+        places = data.get('places')
+        new_garage = Garage(town = town, places = places)
+        return new_garage
+
+    @staticmethod
+    def to_json(obj: Garage):
+        data = {"town": obj.town,
+                "cars": obj.cars,
+                "places": obj.places,
+                "owner": obj.owner
+                }
+        return data
 
     def add(self, car):
         if len(self.cars) < self.places:
@@ -235,27 +276,48 @@ class Garage:
 
 if __name__ == "__main__":
 
+
     #Generate cars
     cars = []
-    for car_counts in range(random.randint(5, 10)):
+    cars_json = []
+    for car_counts in range(1, 5):
         new_car = Car(
             price = random.randint(3000, 50000),
             type = random.choice(CARS_TYPES),
             producer = random.choice(CARS_PRODUCER),
             mileage = random.randint(5000, 100000)
         )
-        cars.append(new_car)
+        #print(new_car)
+        print(new_car.to_json(new_car))
+        cars_json.append(new_car.to_json(new_car))
+        #cars.append(new_car)
         del new_car, car_counts
+    print("Load from json")
+    for car in cars_json:
+        newcar = Car.from_json(car)
+        print(newcar)
+
+
 
     #Generate garages
     garages_list = []
-    for garage_count in range(1, random.randint(4, 7)):
+    garages_json = []
+    for garage_count in range(1, 7):
         new_garage = Garage(random.choice(TOWNS),
-                            [],
                             random.randint(2,10))
-        #print(f" New Garage has been created: \n{str(new_garage)}")
-        garages_list.append(new_garage)
+        print(f" New Garage has been created: \n{str(new_garage)}")
+        json_garage = Garage.to_json(new_garage)
+        print(json_garage)
+        garages_json.append(json_garage)
+        #garages_list.append(new_garage)
         del new_garage, garage_count
+
+    print(f"Garages from Json \n")
+    for new_garage in garages_json:
+        garage = Garage.from_json(new_garage)
+        print(garage)
+        garages_list.append(garage)
+
 
 
     #Move cars to garage
@@ -268,28 +330,48 @@ if __name__ == "__main__":
     #Generate the owners (Cesars):
     cesars = [Cesar(cesar) for cesar in ["Ihor", "Denis", "Olga", "Vika"]]
 
-    #Assign garages to cesars (random)
-    for g in garages_list:
-        curr_cesar = random.choice(cesars)
-        curr_cesar.add_garage(g)
+    # #Restore from pickle
+    # cesars_names = ["Ihor", "Denis", "Olga", "Vika"]
+    # cesars = []
+    #
+    # for cesar in cesars_names:
+    #     filename = str(cesar) + '.pickle'
+     #     with open(filename, "rb") as file:
+    #          cesars.append(pickle.load(file))
 
-
-
-    print("The Colectors statistic")
-    for cesar in cesars:
-        print(f"{'=' * 20} start for {str(cesar.name)} {'=' * 20}")
-        print(f"Cear's {str(cesar.name)} garages list: {cesar.garages}")
-        for garage in cesar.garages:
-            print(f"Cesar: {cesar.name} garage: {garage}")
-            print(f"{'=' * 20} ")
-            print(f"{str(cesar.name)} list of cars in {str(garage)}:")
-            print(garage.car_list())
-            print(f"{'=' * 20}")
-            print(f"Ceasar: {cesar.name} {garage} all cars costs: {garage.hit_car()}")
-
-
-        print(f"{str(cesar.name)}: has the {cesar.cars_count()} cars. The all cars price {cesar.hit_car()}, has {cesar.garages_count()} garages")
-        print(f"{'====' * 20} end {'====' * 20} \n \n")
-
-
-
+    # #Assign garages to cesars (random)
+    # for g in garages_list:
+    #     curr_cesar = random.choice(cesars)
+    #     curr_cesar.add_garage(g)
+    #
+    #
+    #
+    # print("The Colectors statistic")
+    # for cesar in cesars:
+    #     print(f"{'=' * 20} start for {str(cesar.name)} {'=' * 20}")
+    #     print(f"Cear's {str(cesar.name)} garages list: {cesar.garages}")
+    #     print(f"Cesar into Json \n")
+    #     print(f"{'=' * 40}")
+    #
+    #     ##Dump to pickle
+    #     # filename = str(cesar.name) + '.pickle'
+    #     # with open(filename, "wb") as file:
+    #     #     pickle.dump(cesar, file)
+    #
+    #     # json_formatted_str = json.dumps(cesar)
+    #     # print(json_formatted_str)
+    #
+    #     for garage in cesar.garages:
+    #         print(f"Cesar: {cesar.name} garage: {garage}")
+    #         print(f"{'=' * 20} ")
+    #         print(f"{str(cesar.name)} list of cars in {str(garage)}:")
+    #         print(garage.car_list())
+    #         print(f"{'=' * 20}")
+    #         print(f"Ceasar: {cesar.name} {garage} all cars costs: {garage.hit_car()}")
+    #
+    #
+    #     print(f"{str(cesar.name)}: has the {cesar.cars_count()} cars. The all cars price {cesar.hit_car()}, has {cesar.garages_count()} garages")
+    #     print(f"{'====' * 20} end {'====' * 20} \n \n")
+    #
+    #
+    #
