@@ -1,17 +1,11 @@
 """
 Для попереднього домашнього завдання.
-Для класу Колекціонер Машина і Гараж написати методи, які створюють інстанс обєкту
-з (yaml, json, pickle) файлу відповідно
+Для класу Колекціонер Машина і Гараж написати методи, які  :
 
-Для класів Колекціонер Машина і Гараж написати методи, які зберігають стан обєкту в файли формату
-yaml, json, pickle відповідно.
-
-Для класів Колекціонер Машина і Гараж написати методи, які конвертують обєкт в строку формату
-yaml, json, pickle відповідно.
-
-Для класу Колекціонер Машина і Гараж написати методи, які створюють інстанс обєкту
-з (yaml, json, pickle) строки відповідно
-
+1. створюють інстанс обєкту з (yaml, json, pickle) файлу відповідно
+2. які зберігають стан обєкту в файли формату yaml, json, pickle відповідно.
+3. які конвертують обєкт в строку формату yaml, json, pickle відповідно.
+4. які створюють інстанс обєкту з (yaml, json, pickle) строки відповідно
 
 Advanced
 Добавити опрацьовку формату ini
@@ -103,7 +97,7 @@ class Cesar:
         return float(self.hit_car()) != float(other.hit_car())
 
     # Serialization HW
-    @classmethod
+    #@classmethod
     def import_from_file(filename: str, filetype: str):
         """
         filename - the name of file uses to import from
@@ -132,9 +126,13 @@ class Cesar:
             pass
 
         if filetype == 'pickle':
-            with open(filename, "wb") as file:
-                pickle.dump(self, file)
-            return "Saved"
+            try:
+                with open(filename, "wb") as file:
+                    pickle.dump(self, file)
+                    return "Saved"
+            except Exception as e:
+                print("Exception:", e)
+
 
     def conver_to_str(self, strtype):
         """
@@ -255,61 +253,78 @@ class Garage:
 
 if __name__ == "__main__":
 
-    #Generate cars
-    cars = []
-    for car_counts in range(random.randint(5, 10)):
-        new_car = Car(
-            price = random.randint(3000, 50000),
-            type = random.choice(CARS_TYPES),
-            producer = random.choice(CARS_PRODUCER),
-            mileage = random.randint(5000, 100000)
-        )
-        cars.append(new_car)
-        del new_car, car_counts
+    def restore():
+        cesar_names = ["Ihor", "Denis", "Olga", "Vika"]
+        cesars = []
+        for cname in cesar_names:
+            cesars.append(Cesar.import_from_file(str(cname), 'pickle'))
 
-    #Generate garages
-    garages_list = []
-    for garage_count in range(1, random.randint(4, 7)):
-        new_garage = Garage(random.choice(TOWNS),
-                            [],
-                            random.randint(2,10))
-        #print(f" New Garage has been created: \n{str(new_garage)}")
-        garages_list.append(new_garage)
-        del new_garage, garage_count
+    def create_objects():
+        #Generate cars
+        cars = []
+        for car_counts in range(random.randint(5, 10)):
+            new_car = Car(
+                price = random.randint(3000, 50000),
+                type = random.choice(CARS_TYPES),
+                producer = random.choice(CARS_PRODUCER),
+                mileage = random.randint(5000, 100000)
+            )
+            cars.append(new_car)
+            del new_car, car_counts
 
-
-    #Move cars to garage
-    for some_car in cars:
-        choice_garage = random.choice(garages_list)
-        if choice_garage.free_places() >= 1:
-            choice_garage.add(some_car)
-
-
-    #Generate the owners (Cesars):
-    cesars = [Cesar(cesar) for cesar in ["Ihor", "Denis", "Olga", "Vika"]]
-
-    #Assign garages to cesars (random)
-    for g in garages_list:
-        curr_cesar = random.choice(cesars)
-        curr_cesar.add_garage(g)
+        #Generate garages
+        garages_list = []
+        for garage_count in range(1, random.randint(4, 7)):
+            new_garage = Garage(random.choice(TOWNS),
+                                [],
+                                random.randint(2,10))
+            #print(f" New Garage has been created: \n{str(new_garage)}")
+            garages_list.append(new_garage)
+            del new_garage, garage_count
 
 
-
-    print("The Colectors statistic")
-    for cesar in cesars:
-        print(f"{'=' * 20} start for {str(cesar.name)} {'=' * 20}")
-        print(f"Cear's {str(cesar.name)} garages list: {cesar.garages}")
-        for garage in cesar.garages:
-            print(f"Cesar: {cesar.name} garage: {garage}")
-            print(f"{'=' * 20} ")
-            print(f"{str(cesar.name)} list of cars in {str(garage)}:")
-            print(garage.car_list())
-            print(f"{'=' * 20}")
-            print(f"Ceasar: {cesar.name} {garage} all cars costs: {garage.hit_car()}")
+        #Move cars to garage
+        for some_car in cars:
+            choice_garage = random.choice(garages_list)
+            if choice_garage.free_places() >= 1:
+                choice_garage.add(some_car)
 
 
-        print(f"{str(cesar.name)}: has the {cesar.cars_count()} cars. The all cars price {cesar.hit_car()}, has {cesar.garages_count()} garages")
-        print(f"{'====' * 20} end {'====' * 20} \n \n")
+        #Generate the owners (Cesars):
+        cesars = [Cesar(cesar) for cesar in ["Ihor", "Denis", "Olga", "Vika"]]
+
+
+        #Assign garages to cesars (random)
+        for g in garages_list:
+            curr_cesar = random.choice(cesars)
+            curr_cesar.add_garage(g)
 
 
 
+
+    def results():
+        print("The Colectors statistic")
+        for cesar in cesars:
+            print(f"{'=' * 20} start for {str(cesar.name)} {'=' * 20}")
+            print(f"Cear's {str(cesar.name)} garages list: {cesar.garages}")
+            # Backup to pickle
+            #cesar.export_to_file(str(cesar.name), 'pickle')
+
+            for garage in cesar.garages:
+                print(f"Cesar: {cesar.name} garage: {garage}")
+                print(f"{'=' * 20} ")
+                print(f"{str(cesar.name)} list of cars in {str(garage)}:")
+                print(garage.car_list())
+                print(f"{'=' * 20}")
+                print(f"Ceasar: {cesar.name} {garage} all cars costs: {garage.hit_car()}")
+
+
+
+            print(f"{str(cesar.name)}: has the {cesar.cars_count()} cars. The all cars price {cesar.hit_car()}, has {cesar.garages_count()} garages")
+            print(f"{'====' * 20} end {'====' * 20} \n \n")
+
+        Ihor = Cesar(Cesar.import_from_file('Ihor','picklel'))
+        print(Ihor)
+        # #create_objects()
+        # restore()
+        results()
